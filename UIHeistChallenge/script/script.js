@@ -89,7 +89,7 @@ function stopCamera() {
     soundElem.classList.remove("d-none");
     const randomIndex = Math.floor(Math.random() * songs.length); // Get a random index
     const randomSong = songs[randomIndex]; // Get the song path at the random index
-    audioElement.src = `/assets/audio/${randomSong}`; // Set the audio source
+    audioElement.src = `/UIHeistChallenge/assets/audio/${randomSong}`; // Set the audio source
     audioElement.load(); // Load the audio file
     audioElement.play(); // Play the audio
     isSongPlaying = true;
@@ -123,6 +123,8 @@ function blinkTime(element) {
 
 showTime();
 
+
+
 setInterval(() => {
   if(fuelCapacity <= 20 && fuelLevel!=="low" && isEngineOn) {
     fuelDropElem && (fuelDropElem.style.backgroundColor = "orange");
@@ -141,7 +143,7 @@ setInterval(() => {
   showTime();
 },1000)
 
-setInterval(() => {
+ setInterval(() => {
   blinkTime(timeElem);
 },500)
 
@@ -282,12 +284,13 @@ document.addEventListener('keydown', (event) => {
             accelerating = true;
         } else {
             clearInterval(heldKeyInterval);
-            carAmbience.play();
+            key !== "e" && carAmbience.play();
         }
     },2000)
 });
 
-document.addEventListener('keyup', () => {
+document.addEventListener('keyup', (event) => {
+    let key = event?.key;
     isKeyPressed = false;
     heldKey = null; // Optional: Reset the held key
     document.querySelector(".accelerator").classList.remove("accelerating");
