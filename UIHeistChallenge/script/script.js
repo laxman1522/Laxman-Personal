@@ -432,7 +432,7 @@ function startEngine() {
             fuelDropElem && (fuelDropElem.style.backgroundColor = fuelCapacity > 20 ? "green" : "orange");
             isEngineOnInProgress = false;
             isEngineOn = true;
-        },3500);
+      },3500);
 }
 
 function stopEngine() {
@@ -456,10 +456,12 @@ function stopEngine() {
         classListHandler(engineReadyClassElem,"remove","engine-ready");
         timeElem.classList.add("d-none");
         document.getElementById("steeringWheel").style.transform = "none";
+        document.querySelector("#warningMessage").classList.add("d-none");
         setTimeout(() => {
             showNextCharacter(0,engineInstructionsElem,"Power on the engine...");
             isEngineOffInProgress = false;
             isEngineOn = false;
+            carAmbience.pause();
         },1000)
 }
 
