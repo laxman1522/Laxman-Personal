@@ -22,7 +22,10 @@
 
 "R" -> Single Click -> Refills the fuel capacity 
 
+# user can do both accelerate and other actions simultaneously
+# while accelerating if the user applies brake the speed will reduce by 30 if the speed is above than 50
 # If the fuel tank is about to empty, The confirmation popup will be shown and on clicking ok we will refill the fuel and on clicking cancel we will turn off the engine
+# both fuel indicator and fuel progress bar will automatically change to orange if the fuel capacity is below 20 and changes to green if it is above 20 ;
 # appropriate icon will be highlighted based on the key selection
 # on going beyond 80kmph alert message will be shown in the dashboard
 # when user reached the max limit 280kmph we will notify the user that the Max speed reached !!!

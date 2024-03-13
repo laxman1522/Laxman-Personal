@@ -3,7 +3,7 @@ let timeoutId = null;
 let showAndDropInterval = null;
 
 let isKeyPressed = false;
-let heldKey = null;
+let heldKey = [];
 let heldKeyInterval = null;
 let accelerating = false;
 let currentNumber = 1;
@@ -298,7 +298,11 @@ document.addEventListener('keydown', (event) => {
     doubleKeyPressHandler(key);
 
     isKeyPressed = true;
-    heldKey = event.key;
+
+    if(key === "a") {
+      !heldKey.includes("a") && heldKey.push(event.key);
+    }
+    
 
     if (key === 'ArrowRight' && isEngineOn && !isDemoSpeedoMeter) {
         document.querySelector(".right").classList.add("active");
@@ -333,7 +337,14 @@ document.addEventListener('keydown', (event) => {
           brakeElem.classList.remove("braking");
       },500)
       const speedElem = document.getElementById("speed");
-      !isDemoSpeedoMeter && showAndDropNumbers(speedElem, 50, -1,currentNumber > 50 ? 30 : 0)
+      if(accelerating) {
+        if(currentNumber === 280) {
+          showAndDropNumbers(speedElem, 50, 1, 30)
+        } else {
+          currentNumber = currentNumber > 50 ? currentNumber - 30 : currentNumber;
+        }
+      }
+      (!isDemoSpeedoMeter && !accelerating) && showAndDropNumbers(speedElem, 50, -1,currentNumber > 50 ? 30 : 0)
   } else if (key === "r") {
     fuelCapacity = 60;
     fuelDropElem.style.backgroundColor = "green";
@@ -342,19 +353,22 @@ document.addEventListener('keydown', (event) => {
   }
     
     heldKeyInterval = setInterval(() => {
-        if (isKeyPressed && heldKey === "a" && isEngineOn && !isDemoSpeedoMeter) {
-            startAccelerating();
-            if(currentNumber > 80) {
-                document.querySelector("#warningMessage").classList.remove("d-none");
-            } 
-            if(currentNumber === 280) {
-              maxSpeedElem.classList.remove("d-none");
+        if (isKeyPressed && heldKey.includes("a") && isEngineOn && !isDemoSpeedoMeter) {
+          if(currentNumber > 80) {
+            document.querySelector("#warningMessage").classList.remove("d-none");
+          } 
+          if(currentNumber === 280) {
+            maxSpeedElem.classList.remove("d-none");
+          }
+            if(!accelerating) {
+              startAccelerating();
+              document.querySelector(".accelerator").classList.add("accelerating");
+              const speedElem = document.getElementById("speed");
+              !accelerating && showAndDropNumbers(speedElem,50);
+              accelerating = true;
             }
-            document.querySelector(".accelerator").classList.add("accelerating");
-            const speedElem = document.getElementById("speed");
-            !accelerating && showAndDropNumbers(speedElem,50);
-            accelerating = true;
         } else if(isEngineOn) {
+            accelerating = false;
             clearInterval(heldKeyInterval);
             carAmbience.play();
         }
@@ -370,14 +384,18 @@ document.addEventListener('keydown', (event) => {
 document.addEventListener('keyup', (event) => {
   try {
     let key = event?.key;
-    isKeyPressed = false;
-    heldKey = null; // Optional: Reset the held key
-    document.querySelector(".accelerator").classList.remove("accelerating");
-    clearInterval(heldKeyInterval);
-    const speedElem = document.getElementById("speed");
-    accelerating && showAndDropNumbers(speedElem, 100, -1);
-    accelerating = false;
-    stopAccelerating();
+    
+    if(key === "a" && !isDemoSpeedoMeter) {
+      clearInterval(heldKeyInterval);
+      isKeyPressed = false;
+      heldKey = [];
+      accelerating = false;
+      document.querySelector(".accelerator").classList.remove("accelerating");
+      const speedElem = document.getElementById("speed");
+      showAndDropNumbers(speedElem, 100, -1);
+      stopAccelerating();
+    }
+   
   } catch(err) {
 
   }
