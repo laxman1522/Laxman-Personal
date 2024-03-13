@@ -34,6 +34,7 @@ const fuelDropElem = document.querySelector(".fuel-drop");
 const progressElem = document.querySelector(".progress");
 const carImageElem = document.querySelector(".car-image");
 let isSongPlaying = false;
+let isDemoSpeedoMeter = false;
 
 let fuelLevel = "normal";
 let fuelCapacity = 60;
@@ -200,8 +201,10 @@ setInterval(() => {
     if(isEngineOn) {
       document.getElementById("fuelCapacity").innerText = roundNumber(fuelCapacity);
       progressElem.style.width = `${(fuelCapacity/60)*100}px`;
-      carMovingPosition = 100 - (currentNumber/280 * 100);
-      carImageElem.style.backgroundPosition = `${steeringWheelTurningPosition !==0 ? steeringWheelTurningPosition : 50}% ${carMovingPosition}%`;
+      if(!isDemoSpeedoMeter) {
+        carMovingPosition = 100 - (currentNumber/280 * 100);
+        carImageElem.style.backgroundPosition = `${steeringWheelTurningPosition !==0 ? steeringWheelTurningPosition : 50}% ${carMovingPosition}%`;
+      }
     } else if (!isEngineOn) {
       carImageElem.style.backgroundPosition = `50% 90%`;
     }
@@ -328,14 +331,14 @@ document.addEventListener('keydown', (event) => {
       hornElem.currentTime = 0;
       hornElem.play();
     } else  if(key === "b" && !isEngineOnInProgress && isEngineOn) {
-      currentNumber > 0 &&  applyBrake();
+      (currentNumber > 0 && !isDemoSpeedoMeter) &&  applyBrake();
       const brakeElem = document.querySelector(".brake");
       brakeElem.classList.add("braking");
       setTimeout(() => {
           brakeElem.classList.remove("braking");
       },500)
       const speedElem = document.getElementById("speed");
-      showAndDropNumbers(speedElem, 50, -1,currentNumber > 50 ? 30 : 0)
+      !isDemoSpeedoMeter && showAndDropNumbers(speedElem, 50, -1,currentNumber > 50 ? 30 : 0)
   } else if (key === "r") {
     fuelCapacity = 60;
     fuelDropElem.style.backgroundColor = "green";
@@ -419,6 +422,7 @@ function startEngine() {
             const speedElem = document.getElementById("speed");
             document.querySelector('.speed-meter').classList.remove("d-none");
             speedElem.classList.add("speed");
+            isDemoSpeedoMeter = true;
             showAndDropNumbers(speedElem,10);
             const engineReadyClassElem = ["steering","direction-control","volume-fuel"];
             const dNoneElem = ["accelerator","brake","direction-control","volume-fuel","fuel-container","camera","weather","audio","audio-instructions"];
@@ -433,7 +437,8 @@ function startEngine() {
 }
 
 function stopEngine() {
-  const powerSwitch = document.getElementById("powerSwitch");
+        const powerSwitch = document.getElementById("powerSwitch");
+        isDemoSpeedoMeter = false;
         powerSwitch.classList.remove("power-on");
         powerSwitch.classList.remove("engine-ready");
         const engineStatusElem = document.getElementById("engineStatus");
@@ -458,7 +463,8 @@ function stopEngine() {
             isEngineOffInProgress = false;
             isEngineOn = false;
             carAmbience.pause();
-            document.getElementById("steeringWheel").style.transform = "rotate(0deg)";
+            document.getElementById("steeringWheel").style.transform = "none";
+            steeringWheelTurningPosition = 0;
         },1000)
 }
 
@@ -555,6 +561,7 @@ function showAndDropNumbers(element,duration,directions = 1,dropBy = 0) { // Adj
            !isAccelerating && (direction = -1);
         },1000)
       } else if (currentNumber <= 0 && direction === -1) {
+        isDemoSpeedoMeter = isDemoSpeedoMeter ? !isDemoSpeedoMeter : isDemoSpeedoMeter;
         clearInterval(showAndDropInterval); // Stop the loop when reaching 0
       }
   
