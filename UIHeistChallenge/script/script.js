@@ -20,6 +20,13 @@ let nextCharacterTimeOut = null;
 let steeringWheelPosition = 0;
 let steeringWheelTurningPosition = 0;
 let carMovingPosition = 0;
+let isSongPlaying = false;
+let isDemoSpeedoMeter = false;
+let fuelLevel = "normal";
+let fuelCapacity = 60;
+let isCameraActive = false;
+let mediaStream;
+const apiKey = "58b6f7c78582bffab3936dac99c31b25";
 
 const engineSound = document.getElementById('engineSound');
 const carAmbience = document.getElementById('carAmbience');
@@ -34,12 +41,7 @@ const fuelDropElem = document.querySelector(".fuel-drop");
 const progressElem = document.querySelector(".progress");
 const carImageElem = document.querySelector(".car-image");
 const maxSpeedElem = document.querySelector(".max-speed-warning");
-let isSongPlaying = false;
-let isDemoSpeedoMeter = false;
-
-let fuelLevel = "normal";
-let fuelCapacity = 60;
-
+const cameraFeed = document.getElementById("cameraFeed");
 
 const songs = [  // Array to store your MP3 file paths
     "song1.mp3",
@@ -47,19 +49,11 @@ const songs = [  // Array to store your MP3 file paths
     "song3.mp3",
     "song4.mp3",
     "song5.mp3",
-    // Add more song paths here
-  ];
+];
 
-
-  const originalImage = document.getElementById("originalImage");
-const cameraFeed = document.getElementById("cameraFeed");
-const captureButton = document.getElementById("captureButton");
-
-let isCameraActive = false;
-let mediaStream;
-const apiKey = "58b6f7c78582bffab3936dac99c31b25";
-
-
+/**
+ * Logic for fetching the weather data of chennai
+ */
 function getWeatherData() {
   const url = `https://api.openweathermap.org/data/2.5/weather?q=Chennai,India&appid=${apiKey}&units=imperial`; // Using imperial units (Fahrenheit)
 
@@ -77,14 +71,20 @@ function getWeatherData() {
     .catch(error => console.error(error));
 }
 
-getWeatherData();
-
+/**
+ * Method for converting the temperature from fahrenheit to Celsius
+ * @param {*} fahrenheit 
+ * @returns Temperature in Celsius
+ */
 function fahrenheitToCelsius(fahrenheit) {
   // Formula to convert Fahrenheit to Celsius: (°F - 32) * 5/9
   const celsius = (fahrenheit - 32) * 5 / 9;
   return celsius.toFixed(2); // Round to two decimal places (optional)
 }
 
+/**
+ * Function to start the camera
+ */
 function startCamera() {
   try {
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
@@ -109,6 +109,9 @@ function startCamera() {
   }
 }
 
+/**
+ * Function to stop the camera
+ */
 function stopCamera() {
   try {
     document.querySelector(".camera").classList.remove("active");
@@ -118,28 +121,34 @@ function stopCamera() {
   } catch(err) {
 
   }
-  
 }
 
+/**
+ * Function to play the random song available in the local folder
+ */
+function playRandomSong() {
+  const soundElem = document.getElementById("soundSystem");
+  soundElem.classList.remove("d-none");
+  const randomIndex = Math.floor(Math.random() * songs.length); // Get a random index
+  const randomSong = songs[randomIndex]; // Get the song path at the random index
+  audioElement.src = `assets/audio/${randomSong}`; // Set the audio source
+  audioElement.load(); // Load the audio file
+  audioElement.play(); // Play the audio
+  isSongPlaying = true;
+}
 
-  function playRandomSong() {
-    const soundElem = document.getElementById("soundSystem");
-    soundElem.classList.remove("d-none");
-    const randomIndex = Math.floor(Math.random() * songs.length); // Get a random index
-    const randomSong = songs[randomIndex]; // Get the song path at the random index
-    audioElement.src = `assets/audio/${randomSong}`; // Set the audio source
-    audioElement.load(); // Load the audio file
-    audioElement.play(); // Play the audio
-    isSongPlaying = true;
-  }
+/**
+ * Function to pause the song
+ */
+function pauseSong() {
+  document.getElementById("soundSystem").classList.add("d-none");
+  audioElement.pause();
+  isSongPlaying = false;
+}
 
-  function pauseSong() {
-    document.getElementById("soundSystem").classList.add("d-none");
-    audioElement.pause();
-    isSongPlaying = false;
-  }
-
-
+/**
+ * Function to show the current time
+ */
 function showTime() {
   try {
     const now = new Date(); // Get the current date and time
@@ -156,9 +165,11 @@ function showTime() {
   } catch(err) {
 
   }
-  
 }
 
+/**
+ * Function to make the element blink between the given duration
+ */
 function blinkTime(element) {
   try {
     const isVisible = element.style.visibility === 'visible';
@@ -168,59 +179,17 @@ function blinkTime(element) {
   }
 }
 
-showTime();
-
+/**
+ * Function to round off the numbers based on the decimal places
+ */
 function roundNumber(number, decimalPlaces = 0) {
   // Use the toFixed() method with the desired number of decimal places
   return number.toFixed(decimalPlaces);
 }
 
-
-
-setInterval(() => {
-  try {
-    if(fuelCapacity <= 20 && fuelLevel!=="low" && isEngineOn) {
-      fuelDropElem && (fuelDropElem.style.backgroundColor = "orange");
-      progressElem && (progressElem.style.backgroundColor = "orange");
-      fuelLevel = "low"
-    }
-
-    if(fuelCapacity < 1 && !isEngineOffInProgress && isEngineOn) {
-      const fuelAlert = "You are running out of fuel, Do you want to refill the fuel to continue driving ?"
-      if(confirm(fuelAlert)) {
-        fuelCapacity = 60;
-      } else {
-        isEngineOffInProgress = true;
-        stopEngineSound();
-        pauseSong();
-        engineOff();
-        clearIntervals();
-        stopEngine();
-      }
-    }
-  
-    if(isEngineOn) {
-      document.getElementById("fuelCapacity").innerText = roundNumber(fuelCapacity);
-      progressElem.style.width = `${(fuelCapacity/60)*100}px`;
-      if(!isDemoSpeedoMeter) {
-        carMovingPosition = 100 - (currentNumber/280 * 100);
-        carImageElem.style.backgroundPosition = `${steeringWheelTurningPosition !==0 ? steeringWheelTurningPosition : 50}% ${carMovingPosition}%`;
-      }
-    } else if (!isEngineOn) {
-      carImageElem.style.backgroundPosition = `50% 90%`;
-    }
-    
-    showTime();
-  } catch(err) {
-
-  }
-},1000)
-
- setInterval(() => {
-  blinkTime(timeElem);
-  blinkTime(maxSpeedElem);
-},500)
-
+/**
+ * Function to start the engine sound and car ambience sound
+ */
 function playEngineSound() {
   engineSound.currentTime = 0; // Reset playback time (optional for continuous sound)
   engineSound.play();
@@ -230,11 +199,17 @@ function playEngineSound() {
   },3000)
 }
 
+/**
+ * Function to stop the engine sound
+ */
 function stopEngineSound() {
   carAmbience.pause();
   engineSound.pause();
 }
 
+/**
+ * Function to handle the logic once the engine starts accelerating
+ */
 function startAccelerating() {
   (carAccelerating.currentTime > carAccelerating.duration - 4) && (carAccelerating.currentTime = 0)
   if(!isAccelerating) {
@@ -246,22 +221,36 @@ function startAccelerating() {
   isAccelerating = true;
 }
 
+/**
+ * Function to handle the logic once the engine stops accelerating
+ */
 function stopAccelerating() {
   maxSpeedElem.classList.add("d-none");
   isAccelerating = false;
   carAccelerating.pause();
 }
 
+/**
+ * Function to handle the logic once the engine is turned off
+ */
 function engineOff() {
   carEngineOff.currentTime = 0;
   carEngineOff.play();
 }
 
+/**
+ * Function to handle the logic once the user applies brake
+ */
 function applyBrake() {
   brake.currentTime = 0;
   brake.play();
 }
 
+/**
+ * Function to handle the logic to rotate the steering based on the user input
+ * @param {*} angle 
+ * @param {*} direction 
+ */
 function rotateSteeringWheel(angle,direction) {
   try {
     const targetPosition = steeringWheelPosition + angle; // Calculate target rotation
@@ -293,13 +282,16 @@ function rotateSteeringWheel(angle,direction) {
   } catch(err) {
 
     }
-  }
+}
   
-  // Helper function for linear interpolation (lerp)
-  function lerp(start, end, amount) {
+// Helper function for linear interpolation (lerp)
+function lerp(start, end, amount) {
     return (1 - amount) * start + amount * end;
 }
 
+/**
+ * Listner for keydown event
+ */
 document.addEventListener('keydown', (event) => {
   try {
     const key = event.key;
@@ -372,6 +364,9 @@ document.addEventListener('keydown', (event) => {
   }
 });
 
+/**
+ * Listener for key up event
+ */
 document.addEventListener('keyup', (event) => {
   try {
     let key = event?.key;
@@ -389,12 +384,18 @@ document.addEventListener('keyup', (event) => {
     
 });
 
+/**
+ * Function to handle the logic of starting the fuel interval once the engine is turned on
+ */
 function startFuelInterval() {
     fuelInterval = setInterval(() => {
       fuelCapacity = (fuelCapacity >= 0.2) ? fuelCapacity - 0.2 : fuelCapacity;
     }, 1000);
 }
 
+/**
+ * Function to handle the logic of adding and removing the classlist of the DOM element
+ */
 function classListHandler(selectorNames,type,className) {
   if(type === "add") {
     for(let selector of selectorNames) {
@@ -407,6 +408,9 @@ function classListHandler(selectorNames,type,className) {
   }
 }
 
+/**
+ * Function to handle the logic of starting the engine
+ */
 function startEngine() {
   const powerSwitch = document.getElementById("powerSwitch");
         powerSwitch.classList.add("power-on");
@@ -442,6 +446,9 @@ function startEngine() {
       },3500);
 }
 
+/**
+ * Function to handle the logic of turning off the engine
+ */
 function stopEngine() {
         const powerSwitch = document.getElementById("powerSwitch");
         isDemoSpeedoMeter = false;
@@ -474,7 +481,9 @@ function stopEngine() {
         },1000)
 }
 
-
+/**
+ * Function to handle the logic when user double clicks any key
+ */
 const doubleKeyPressHandler = (key) => {
   try {
      // Clear any existing timeout if a new key is pressed
@@ -509,6 +518,9 @@ const doubleKeyPressHandler = (key) => {
    
 }
 
+/**
+ * Function to handle the logic of showing character by character of the particular text based on the duration
+ */
 function showNextCharacter(currentCharIndex,outputElement,text) {
   if (currentCharIndex < text?.length) {
    outputElement.textContent += text[currentCharIndex];
@@ -519,59 +531,120 @@ function showNextCharacter(currentCharIndex,outputElement,text) {
   }
 }
 
+/**
+ * Method to check whether it is a morning time or evening time
+ */
 function isMorningInIST() {
-    const now = new Date();
-    const options = {
-      timeZone: 'Asia/Kolkata', // Use IST time zone
-      hour12: false, // Use 12-hour clock format
-      hour: 'numeric', // Extract only the hour
-    };
-  
-    const currentHour = parseInt(now.toLocaleTimeString('en-IN', options));
-  
-    // Define morning hours based on your preference (adjust if needed)
-    const morningStart = 6;
-    const morningEnd = 11;
-  
-    return currentHour >= morningStart && currentHour < morningEnd;
+  const now = new Date();
+  const options = {
+    timeZone: 'Asia/Kolkata', // Use IST time zone
+    hour12: false, // Use 12-hour clock format
+    hour: 'numeric', // Extract only the hour
+  };
+
+  const currentHour = parseInt(now.toLocaleTimeString('en-IN', options));
+
+  // Define morning hours based on your preference (adjust if needed)
+  const morningStart = 6;
+  const morningEnd = 11;
+
+  return currentHour >= morningStart && currentHour < morningEnd;
 }
+
+/**
+ * Function to handle the logic of increasing and decreasing a number (Speed meter functionality)
+ */
+function showAndDropNumbers(element,duration,directions = 1,dropBy = 0) { // Adjust duration in milliseconds (default 1 second)
+  let direction = directions; // 1 for increasing, -1 for decreasing
+
+  clearInterval(showAndDropInterval);
+
+  currentNumber = dropBy ? currentNumber - dropBy : currentNumber
+
+  showAndDropInterval = setInterval(() => {
+      if(currentNumber < 80) {
+          document.querySelector("#warningMessage").classList.add("d-none");
+      }
+      if(currentNumber >= 0) {
+          element.textContent = currentNumber;
+      }
+
+    if (currentNumber >= 280 && direction === 1) {
+      direction = 0;
+      setTimeout(() => {
+         !isAccelerating && (direction = -1);
+      },1000)
+    } else if (currentNumber <= 0 && direction === -1) {
+      isDemoSpeedoMeter = isDemoSpeedoMeter ? !isDemoSpeedoMeter : isDemoSpeedoMeter;
+      clearInterval(showAndDropInterval); // Stop the loop when reaching 0
+    }
+
+    currentNumber += direction;
+  }, duration);
+}
+
+getWeatherData();
+showTime();
+
+setInterval(() => {
+  try {
+    if(fuelCapacity <= 20 && fuelLevel!=="low" && isEngineOn) {
+      fuelDropElem && (fuelDropElem.style.backgroundColor = "orange");
+      progressElem && (progressElem.style.backgroundColor = "orange");
+      fuelLevel = "low"
+    }
+
+    if(fuelCapacity < 1 && !isEngineOffInProgress && isEngineOn) {
+      const fuelAlert = "You are running out of fuel, Do you want to refill the fuel to continue driving ?"
+      if(confirm(fuelAlert)) {
+        fuelCapacity = 60;
+      } else {
+        isEngineOffInProgress = true;
+        stopEngineSound();
+        pauseSong();
+        engineOff();
+        clearIntervals();
+        stopEngine();
+      }
+    }
+  
+    if(isEngineOn) {
+      document.getElementById("fuelCapacity").innerText = roundNumber(fuelCapacity);
+      progressElem.style.width = `${(fuelCapacity/60)*100}px`;
+      if(!isDemoSpeedoMeter) {
+        carMovingPosition = 100 - (currentNumber/280 * 100);
+        carImageElem.style.backgroundPosition = `${steeringWheelTurningPosition !==0 ? steeringWheelTurningPosition : 50}% ${carMovingPosition}%`;
+      }
+    } else if (!isEngineOn) {
+      carImageElem.style.backgroundPosition = `50% 90%`;
+    }
+    
+    showTime();
+  } catch(err) {
+
+  }
+},1000)
+
+setInterval(() => {
+  blinkTime(timeElem);
+  blinkTime(maxSpeedElem);
+},500)
 
 const clearIntervals = () => {
-    clearInterval(showAndDropInterval);
-    clearInterval(heldKeyInterval);
-    clearTimeout(engineInstructionsTimeout);
-    clearTimeout(welcomeMessageTimeout);
-    clearInterval(fuelInterval);
-    clearTimeout(nextCharacterTimeOut);
-    clearTimeout(carAmbienceTimeOut);
+  clearInterval(showAndDropInterval);
+  clearInterval(heldKeyInterval);
+  clearTimeout(engineInstructionsTimeout);
+  clearTimeout(welcomeMessageTimeout);
+  clearInterval(fuelInterval);
+  clearTimeout(nextCharacterTimeOut);
+  clearTimeout(carAmbienceTimeOut);
 }
 
-function showAndDropNumbers(element,duration,directions = 1,dropBy = 0) { // Adjust duration in milliseconds (default 1 second)
-    let direction = directions; // 1 for increasing, -1 for decreasing
 
-    clearInterval(showAndDropInterval);
 
-    currentNumber = dropBy ? currentNumber - dropBy : currentNumber
-  
-    showAndDropInterval = setInterval(() => {
-        if(currentNumber < 80) {
-            document.querySelector("#warningMessage").classList.add("d-none");
-        }
-        if(currentNumber >= 0) {
-            element.textContent = currentNumber;
-        }
-  
-      if (currentNumber >= 280 && direction === 1) {
-        direction = 0;
-        setTimeout(() => {
-           !isAccelerating && (direction = -1);
-        },1000)
-      } else if (currentNumber <= 0 && direction === -1) {
-        isDemoSpeedoMeter = isDemoSpeedoMeter ? !isDemoSpeedoMeter : isDemoSpeedoMeter;
-        clearInterval(showAndDropInterval); // Stop the loop when reaching 0
-      }
-  
-      currentNumber += direction;
-    }, duration);
-}
+
+
+
+
+
   
