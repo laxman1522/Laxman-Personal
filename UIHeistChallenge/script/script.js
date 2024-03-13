@@ -55,6 +55,33 @@ const captureButton = document.getElementById("captureButton");
 
 let isCameraActive = false;
 let mediaStream;
+const apiKey = "58b6f7c78582bffab3936dac99c31b25";
+
+
+function getWeatherData() {
+  const url = `https://api.openweathermap.org/data/2.5/weather?q=Chennai,India&appid=${apiKey}&units=imperial`; // Using imperial units (Fahrenheit)
+
+  fetch(url)
+    .then(response => response.json())
+    .then(data => {
+      const temp = fahrenheitToCelsius(Math.round(data.main.temp));
+      const weatherInfo = `
+        <div>${temp}<span>°</span>C</div>
+        <div class="place">${data?.name}</div>
+      `;
+
+      document.querySelector(".weather").innerHTML = weatherInfo;
+    })
+    .catch(error => console.error(error));
+}
+
+getWeatherData();
+
+function fahrenheitToCelsius(fahrenheit) {
+  // Formula to convert Fahrenheit to Celsius: (°F - 32) * 5/9
+  const celsius = (fahrenheit - 32) * 5 / 9;
+  return celsius.toFixed(2); // Round to two decimal places (optional)
+}
 
 function startCamera() {
   if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {

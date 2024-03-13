@@ -201,9 +201,9 @@
 
 .sound-system {
     position: absolute;
-    top: 5%;
-    left: 5%;
-    width: 100px;
+    top: 59%;
+    left: 48%;
+    width: 40px;
     animation: animateSteering 2s infinite;
 }
 
@@ -246,7 +246,7 @@
 #time {
     position: absolute;
     left: 20%;
-    top: 45%;
+    top: 43.5%;
     font-size: 20px;
     color: #fff;
 
@@ -324,6 +324,10 @@
 .weather {
     position: absolute;
     right: 19%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
     margin-bottom: 90px;
     color: #fff;
     opacity: 0.75;
@@ -331,6 +335,10 @@
 
 .weather span {
     font-size: 1.2rem;
+}
+
+.weather .place {
+    font-size: 12px;
 }
 
 .audio {
@@ -349,3 +357,4 @@
     color: yellow;
     font-size: 10px;
 }
+
