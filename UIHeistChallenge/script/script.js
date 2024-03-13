@@ -36,7 +36,7 @@ const carImageElem = document.querySelector(".car-image");
 let isSongPlaying = false;
 
 let fuelLevel = "normal";
-let fuelCapacity = 21;
+let fuelCapacity = 60;
 
 
 const songs = [  // Array to store your MP3 file paths
@@ -64,7 +64,7 @@ function getWeatherData() {
   fetch(url)
     .then(response => response.json())
     .then(data => {
-      const temp = fahrenheitToCelsius(Math.round(data.main.temp));
+      const temp =roundNumber(Number(fahrenheitToCelsius(Math.round(data.main.temp))));
       const weatherInfo = `
         <div>${temp}<span>°</span>C</div>
         <div class="place">${data?.name}</div>
@@ -84,30 +84,39 @@ function fahrenheitToCelsius(fahrenheit) {
 }
 
 function startCamera() {
-  if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-    navigator.mediaDevices.getUserMedia({ video: true })
-      .then(stream => {
-        document.querySelector(".camera").classList.add("active");
-        cameraFeed.classList.remove("d-none");
-        mediaStream = stream;
-        cameraFeed.srcObject = stream;
-        cameraFeed.play();
-        isCameraActive = true;
-      })
-      .catch(error => {
-        console.error("Error accessing camera:", error);
-        // Handle camera access error (e.g., permission denied)
-      });
-  } else {
-    console.warn("Camera access not supported by your browser.");
+  try {
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+      navigator.mediaDevices.getUserMedia({ video: true })
+        .then(stream => {
+          document.querySelector(".camera").classList.add("active");
+          cameraFeed.classList.remove("d-none");
+          mediaStream = stream;
+          cameraFeed.srcObject = stream;
+          cameraFeed.play();
+          isCameraActive = true;
+        })
+        .catch(error => {
+          console.error("Error accessing camera:", error);
+          // Handle camera access error (e.g., permission denied)
+        });
+    } else {
+      console.warn("Camera access not supported by your browser.");
+    }
+  } catch(err) {
+
   }
 }
 
 function stopCamera() {
-  document.querySelector(".camera").classList.remove("active");
-  cameraFeed.classList.add("d-none");
-  mediaStream.getTracks().forEach(track => track.stop());
-  isCameraActive = false;
+  try {
+    document.querySelector(".camera").classList.remove("active");
+    cameraFeed.classList.add("d-none");
+    mediaStream.getTracks().forEach(track => track.stop());
+    isCameraActive = false;
+  } catch(err) {
+
+  }
+  
 }
 
 
@@ -130,44 +139,77 @@ function stopCamera() {
 
 
 function showTime() {
-  const now = new Date(); // Get the current date and time
+  try {
+    const now = new Date(); // Get the current date and time
 
-  // Format the time components
-  const hour = now.getHours(); // Get hours in 24-hour format
-  const hours = hour % 12 || 12; // Convert to 12-hour format (12 for midnight/noon)
-  const minutes = now.getMinutes().toString().padStart(2, '0');
-  const amPm = hour < 12 ? 'AM' : 'PM'; // Set AM or PM based on hour
+    // Format the time components
+    const hour = now.getHours(); // Get hours in 24-hour format
+    const hours = hour % 12 || 12; // Convert to 12-hour format (12 for midnight/noon)
+    const minutes = now.getMinutes().toString().padStart(2, '0');
+    const amPm = hour < 12 ? 'AM' : 'PM'; // Set AM or PM based on hour
 
-  // Build the time string in 12-hour format
-  const timeString = `${hours}:${minutes} ${amPm}`;
-  timeElem.innerText = timeString;
+    // Build the time string in 12-hour format
+    const timeString = `${hours}:${minutes} ${amPm}`;
+    timeElem.innerText = timeString;
+  } catch(err) {
+
+  }
+  
 }
 
 function blinkTime(element) {
-  const isVisible = element.style.visibility === 'visible';
-  element.style.visibility = isVisible ? 'hidden' : 'visible';
+  try {
+    const isVisible = element.style.visibility === 'visible';
+    element.style.visibility = isVisible ? 'hidden' : 'visible';
+  } catch(err) {
+
+  }
 }
 
 showTime();
 
+function roundNumber(number, decimalPlaces = 0) {
+  // Use the toFixed() method with the desired number of decimal places
+  return number.toFixed(decimalPlaces);
+}
+
 
 
 setInterval(() => {
-  if(fuelCapacity <= 20 && fuelLevel!=="low" && isEngineOn) {
-    fuelDropElem && (fuelDropElem.style.backgroundColor = "orange");
-    progressElem && (progressElem.style.backgroundColor = "orange");
-    fuelLevel = "low"
-  }
+  try {
+    if(fuelCapacity <= 20 && fuelLevel!=="low" && isEngineOn) {
+      fuelDropElem && (fuelDropElem.style.backgroundColor = "orange");
+      progressElem && (progressElem.style.backgroundColor = "orange");
+      fuelLevel = "low"
+    }
 
-  if(isEngineOn) {
-    progressElem.style.width = `${(fuelCapacity/60)*100}px`;
-    carMovingPosition = 100 - (currentNumber/280 * 100);
-    carImageElem.style.backgroundPosition = `${steeringWheelTurningPosition !==0 ? steeringWheelTurningPosition : 50}% ${carMovingPosition}%`;
-  } else if (!isEngineOn) {
-    carImageElem.style.backgroundPosition = `50% 90%`;
-  }
+    if(fuelCapacity < 1 && !isEngineOffInProgress && isEngineOn) {
+      const fuelAlert = "You are running out of fuel, Do you want to refill the fuel to continue driving ?"
+      if(confirm(fuelAlert)) {
+        fuelCapacity = 60;
+      } else {
+        isEngineOffInProgress = true;
+        stopEngineSound();
+        pauseSong();
+        engineOff();
+        clearIntervals();
+        stopEngine();
+      }
+    }
   
-  showTime();
+    if(isEngineOn) {
+      document.getElementById("fuelCapacity").innerText = roundNumber(fuelCapacity);
+      progressElem.style.width = `${(fuelCapacity/60)*100}px`;
+      carMovingPosition = 100 - (currentNumber/280 * 100);
+      carImageElem.style.backgroundPosition = `${steeringWheelTurningPosition !==0 ? steeringWheelTurningPosition : 50}% ${carMovingPosition}%`;
+    } else if (!isEngineOn) {
+      carImageElem.style.backgroundPosition = `50% 90%`;
+    }
+    
+    showTime();
+  } catch(err) {
+
+  }
 },1000)
 
  setInterval(() => {
@@ -215,6 +257,7 @@ function applyBrake() {
 }
 
 function rotateSteeringWheel(angle,direction) {
+  try {
     const targetPosition = steeringWheelPosition + angle; // Calculate target rotation
     document.getElementById("steeringWheel").classList.remove("animate-steering");
     const updatedSteeringWheelPosition = lerp(steeringWheelPosition, targetPosition, 0.1)
@@ -244,14 +287,18 @@ function rotateSteeringWheel(angle,direction) {
     };
   
     animate(); // Initiate animation loop
+  } catch(err) {
+
+    }
   }
   
   // Helper function for linear interpolation (lerp)
   function lerp(start, end, amount) {
     return (1 - amount) * start + amount * end;
-  }
+}
 
 document.addEventListener('keydown', (event) => {
+  try {
     const key = event.key;
     doubleKeyPressHandler(key);
 
@@ -314,9 +361,13 @@ document.addEventListener('keydown', (event) => {
             carAmbience.play();
         }
     },2000)
+  }catch(err) {
+
+  }
 });
 
 document.addEventListener('keyup', (event) => {
+  try {
     let key = event?.key;
     isKeyPressed = false;
     heldKey = null; // Optional: Reset the held key
@@ -326,6 +377,10 @@ document.addEventListener('keyup', (event) => {
     accelerating && showAndDropNumbers(speedElem, 100, -1);
     accelerating = false;
     stopAccelerating();
+  } catch(err) {
+
+  }
+    
 });
 
 function startFuelInterval() {
@@ -410,34 +465,39 @@ function stopEngine() {
 
 
 const doubleKeyPressHandler = (key) => {
-    // Clear any existing timeout if a new key is pressed
-    clearTimeout(timeoutId);
+  try {
+     // Clear any existing timeout if a new key is pressed
+     clearTimeout(timeoutId);
   
-    if (key === firstKeyPress && !isEngineOffInProgress) {
-      // Double key press detected!
-      if(key === "s" && !isEngineOnInProgress && !isEngineOn) {
-        clearIntervals();
-        isEngineOnInProgress = true;
-        startFuelInterval();
-        playEngineSound();
-        startEngine();
-        firstKeyPress = null; // Reset for next double press
-      }
-    } else {
-      // New key pressed, set timer for potential double press
-      if(key === "e" && !isEngineOnInProgress && isEngineOn && !isEngineOffInProgress) {
-        isEngineOffInProgress = true;
-        stopEngineSound();
-        pauseSong();
-        engineOff();
-        clearIntervals();
-        stopEngine();
-      }
-      firstKeyPress = key;
-      timeoutId = setTimeout(() => {
-        firstKeyPress = null; // Reset if no second press within timeout
-      }, 1000); // Adjust timeout value as needed (in milliseconds)
-    }
+     if (key === firstKeyPress && !isEngineOffInProgress) {
+       // Double key press detected!
+       if(key === "s" && !isEngineOnInProgress && !isEngineOn) {
+         clearIntervals();
+         isEngineOnInProgress = true;
+         startFuelInterval();
+         playEngineSound();
+         startEngine();
+         firstKeyPress = null; // Reset for next double press
+       }
+     } else {
+       // New key pressed, set timer for potential double press
+       if(key === "e" && !isEngineOnInProgress && isEngineOn && !isEngineOffInProgress) {
+         isEngineOffInProgress = true;
+         stopEngineSound();
+         pauseSong();
+         engineOff();
+         clearIntervals();
+         stopEngine();
+       }
+       firstKeyPress = key;
+       timeoutId = setTimeout(() => {
+         firstKeyPress = null; // Reset if no second press within timeout
+       }, 1000); // Adjust timeout value as needed (in milliseconds)
+     }
+  } catch(err) {
+
+  }
+   
 }
 
 function showNextCharacter(currentCharIndex,outputElement,text) {
