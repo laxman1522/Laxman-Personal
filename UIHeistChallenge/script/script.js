@@ -308,14 +308,14 @@ document.addEventListener('keydown', (event) => {
     isKeyPressed = true;
     heldKey = event.key;
 
-    if (key === 'ArrowRight' && isEngineOn) {
+    if (key === 'ArrowRight' && isEngineOn && !isDemoSpeedoMeter) {
         document.querySelector(".right").classList.add("active");
         document.querySelector(".left").classList.remove("active");
         setTimeout(() => {
           document.querySelector(".right").classList.remove("active");
         },300)
         rotateSteeringWheel(45, "right");
-    } else if (key === 'ArrowLeft' && isEngineOn) {
+    } else if (key === 'ArrowLeft' && isEngineOn && !isDemoSpeedoMeter) {
         document.querySelector(".right").classList.remove("active");
         document.querySelector(".left").classList.add("active");
         setTimeout(() => {
