@@ -89,7 +89,7 @@ function stopCamera() {
     soundElem.classList.remove("d-none");
     const randomIndex = Math.floor(Math.random() * songs.length); // Get a random index
     const randomSong = songs[randomIndex]; // Get the song path at the random index
-    audioElement.src = `/UIHeistChallenge/assets/audio/${randomSong}`; // Set the audio source
+    audioElement.src = `assets/audio/${randomSong}`; // Set the audio source
     audioElement.load(); // Load the audio file
     audioElement.play(); // Play the audio
     isSongPlaying = true;
