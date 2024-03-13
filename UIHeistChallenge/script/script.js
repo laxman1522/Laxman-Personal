@@ -281,9 +281,6 @@ function rotateSteeringWheel(angle,direction) {
       }
       document.getElementById("steeringWheel").style.transform = `rotate(${steeringWheelPosition}deg)`;
   
-      if (Math.abs(steeringWheelPosition - targetPosition) > 0.1) {
-        requestAnimationFrame(animate); // Request next animation frame for smooth update
-      }
     };
   
     animate(); // Initiate animation loop
@@ -455,13 +452,13 @@ function stopEngine() {
         classListHandler(dNoneElem, "add", "d-none");
         classListHandler(engineReadyClassElem,"remove","engine-ready");
         timeElem.classList.add("d-none");
-        document.getElementById("steeringWheel").style.transform = "none";
         document.querySelector("#warningMessage").classList.add("d-none");
         setTimeout(() => {
             showNextCharacter(0,engineInstructionsElem,"Power on the engine...");
             isEngineOffInProgress = false;
             isEngineOn = false;
             carAmbience.pause();
+            document.getElementById("steeringWheel").style.transform = "rotate(0deg)";
         },1000)
 }
 
@@ -471,16 +468,14 @@ const doubleKeyPressHandler = (key) => {
      // Clear any existing timeout if a new key is pressed
      clearTimeout(timeoutId);
   
-     if (key === firstKeyPress && !isEngineOffInProgress) {
+     if (key === firstKeyPress && !isEngineOffInProgress && key === "s" && !isEngineOnInProgress && !isEngineOn) {
        // Double key press detected!
-       if(key === "s" && !isEngineOnInProgress && !isEngineOn) {
          clearIntervals();
          isEngineOnInProgress = true;
          startFuelInterval();
          playEngineSound();
          startEngine();
          firstKeyPress = null; // Reset for next double press
-       }
      } else {
        // New key pressed, set timer for potential double press
        if(key === "e" && !isEngineOnInProgress && isEngineOn && !isEngineOffInProgress) {
