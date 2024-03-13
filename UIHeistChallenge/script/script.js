@@ -598,6 +598,8 @@ setInterval(() => {
       const fuelAlert = "You are running out of fuel, Do you want to refill the fuel to continue driving ?"
       if(confirm(fuelAlert)) {
         fuelCapacity = 60;
+        fuelDropElem.style.backgroundColor = "green";
+        progressElem.style.backgroundColor = "green";
       } else {
         isEngineOffInProgress = true;
         stopEngineSound();

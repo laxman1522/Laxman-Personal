@@ -27,4 +27,6 @@
 # on going beyond 80kmph alert message will be shown in the dashboard
 # when user reached the max limit 280kmph we will notify the user that the Max speed reached !!!
 # Wait for few seconds for the engine to get ready to perform actions after double clicking "S"
+# Vehicle will come back to its idle position once the engine is turned off
+
 
