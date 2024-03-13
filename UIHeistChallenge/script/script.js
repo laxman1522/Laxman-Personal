@@ -484,7 +484,7 @@ function stopEngine() {
         const speedElem = document.getElementById("speed");
         speedElem.classList.remove("speed");
         const engineReadyClassElem = ["steering","direction-control","volume-fuel"];
-        const dNoneElem = ["accelerator","brake","direction-control","speed-meter","volume-fuel","fuel-container","camera","weather","audio","audio-instructions"];
+        const dNoneElem = ["accelerator","brake","direction-control","speed-meter","volume-fuel","fuel-container","camera","weather","audio","audio-instructions","max-speed-warning"];
         classListHandler(dNoneElem, "add", "d-none");
         classListHandler(engineReadyClassElem,"remove","engine-ready");
         timeElem.classList.add("d-none");
