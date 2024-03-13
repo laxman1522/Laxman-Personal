@@ -2,9 +2,9 @@
 <html>
 <head>
     <title>Laxis Racing Simulator</title>
-    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="styles/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <script src="script.js" defer></script>
+    <script src="script/script.js" defer></script>
 </head>
 <body>
     <div class="main-container">
@@ -13,14 +13,14 @@
             <div id="powerSwitch" class="power-switch">
                 <i class="fa fa-power-off power-icon"></i>
                 <div>
-                    <img class="accelerator d-none" src="/assets/images/accelerator.png" alt="accelerator"/>
-                    <img class="brake d-none" src="/assets/images/brake.png" alt="brake"/>
+                    <img class="accelerator d-none" src="assets/images/accelerator.png" alt="accelerator"/>
+                    <img class="brake d-none" src="assets/images/brake.png" alt="brake"/>
                 </div>
             </div>
             <div class="instructions">
                 <div id="welcomeMessage"></div>
                 <div id="warningMessage" class="d-none">
-                    <img class="caution" src="/assets/images/caution.png" alt="caution"> Speed Limit Exceeded...
+                    <img class="caution" src="assets/images/caution.png" alt="caution"> Speed Limit Exceeded...
                 </div>
                 <div id="engineStatus">Engine Off</div>
                 <div id="engineInstructions">Power on the engine...</div>
@@ -39,7 +39,7 @@
                 </div>
             </div>
             <div class="steering">
-                <img id="steeringWheel" class="animate-steering" src="/assets/images/steeringWheel.png" alt="steering"/>
+                <img id="steeringWheel" class="animate-steering" src="assets/images/steeringWheel.png" alt="steering"/>
             </div>
             <div class="camera d-none">
                 <img src="assets/images/camera.png" alt="camera"/>
@@ -47,10 +47,10 @@
             <div id="soundSystem" class="sound-system d-none">
                 <img src="assets/images/party.png" alt="party"/>
             </div>
-            <audio id="engineSound" src="/assets/audio/carEngineStarting.mp3" preload="auto"></audio>
-            <audio id="carAmbience" src="/assets/audio/carDriving.mp3" preload="auto"></audio>
-            <audio id="carAccelerating" src="/assets/audio/lambo.mp3" preload="auto"></audio>
-            <audio id="carEngineOff" src="/assets/audio/engineTurnOff.mp3" preload="auto"></audio>
+            <audio id="engineSound" src="assets/audio/carEngineStarting.mp3" preload="auto"></audio>
+            <audio id="carAmbience" src="assets/audio/carDriving.mp3" preload="auto"></audio>
+            <audio id="carAccelerating" src="assets/audio/lambo.mp3" preload="auto"></audio>
+            <audio id="carEngineOff" src="assets/audio/engineTurnOff.mp3" preload="auto"></audio>
             <audio id="brake" src="assets/audio/brake.mp3" preload="auto"></audio>
             <audio id="audioPlayer" src="" preload="auto"></audio>
             <audio id="carHorn" src="assets/audio/carHorn.mp3" preload="auto"></audio>
@@ -59,12 +59,12 @@
                 <div class="left"><i class="fa fa-caret-up"></i></div>
             </div>
             <div class="volume-fuel d-none">
-                <div class="fuel-drop"><img src="/assets/images/drop.png" alt="fuel-drop"/></div>
-                <div class="volume"><img src="/assets/images/highVolume.png" alt="volume"/></i></div>
+                <div class="fuel-drop"><img src="assets/images/drop.png" alt="fuel-drop"/></div>
+                <div class="volume"><img src="assets/images/highVolume.png" alt="volume"/></i></div>
             </div>
             <div class="weather d-none">34<span>°</span>C</div>
             <div class="audio d-none">
-                <img src="/assets/images/carAudio.png" alt="car-audio"/>
+                <img src="assets/images/carAudio.png" alt="car-audio"/>
             </div>
             <div class="audio-instructions d-none">Toggle Music Using "P"</div>
         </div>
