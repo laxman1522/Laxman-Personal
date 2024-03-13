@@ -1,0 +1,351 @@
+* {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.main-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100vw;
+    height: 100vh;
+}
+
+.d-none {
+    display: none !important;
+}
+
+.active, .accelerating.accelerator {
+    border-color: green !important;
+}
+
+.steering img {
+    position: absolute;
+    right: 17.5%;
+    width: 200px;
+}
+
+.camera {
+    position: absolute;
+    bottom: 5%;
+}
+
+.camera img {
+    width: 100%;
+}
+
+#cameraFeed {
+    position: absolute;
+    top: 6%;
+    left: 33%;
+    width: 330px;
+    object-fit: cover;
+    height: 150px;
+    border-radius: 20%;
+    clip-path: polygon(0% -10%, 100% -10%, 85.3% 145.3%, 8.8% 99%)
+}
+
+.direction-control, .volume-fuel {
+    position: absolute;
+    display: flex;
+    flex-direction: row-reverse;
+    gap: 15px; 
+}
+
+.volume-fuel .volume, .volume-fuel .fuel-drop {
+    margin: 0;
+}
+
+.direction-control { 
+    animation: directionControlAnimate 2s  alternate;
+}
+
+.volume-fuel {
+    animation: volumeFuelAnimation 2s alternate;
+}
+
+@keyframes volumeFuelAnimation {
+    0% {
+        right: 70%;
+        bottom: 20%;
+    }
+    100% {
+        right: 5%;
+        bottom: 12.5%;
+    }
+}
+
+@keyframes directionControlAnimate {
+    0% {
+        right: 70%;
+    }
+    100% {
+        right: 5%;
+        bottom: 3%;
+    }
+}
+
+.direction-control.engine-ready {
+    right: 5%;
+    bottom: 3%;
+}
+
+.volume-fuel.engine-ready {
+    right: 5%;
+    bottom: 12.5%;
+}
+
+.direction-control div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: 5px solid rgb(61,92,104);
+    background-color: rgb(48,77,84);
+    cursor: pointer;
+}
+
+.direction-control .right {
+    transform: rotate(90deg);
+}
+
+.direction-control .left {
+    transform: rotate(-90deg);
+}
+
+.direction-control i {
+   font-size: 4rem;
+   margin-top: -15px;
+   color: rgb(173,189,192);
+}
+
+
+.engine-ready.steering .animate-steering {
+    animation: animateSteering 2s infinite, rotate 1s alternate;
+}
+
+  @keyframes animateSteering {
+    0% {
+      transform:scale(1); /* Start at original size */
+    }
+    50% {
+      transform:scale(1.1); /* Increase size halfway through */
+    }
+    100% {
+      transform:scale(1); /* Back to original size at the end */
+    }
+  }
+
+  @keyframes rotate {
+    0% {
+      transform:rotate(45deg); /* Start at original size */
+    }
+    50% {
+      transform: rotate(180deg); /* Increase size halfway through */
+    }
+    100% {
+      transform: rotate(360deg); /* Back to original size at the end */
+    }
+  }
+
+.caution {
+    width: 25px;
+    height: 25px;
+}
+
+#warningMessage {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: -25px;
+    color: orange;
+    font-size: 14px;
+    font-style: italic;
+}
+
+.braking.brake {
+    border-color: red;
+}
+
+.fuel-drop img,.volume img{
+    width: 100%;
+}
+
+.accelerator,.brake,.fuel-drop,.volume,.camera {
+    width: 40px;
+    margin: 10px 20px 0 0;
+    border: 5px solid rgb(61,92,104);
+    border-radius: 50%;
+    padding: 5px;
+    background-color: rgb(48,77,84);
+}
+
+#engineInstructions,#engineStatus {
+    margin-top: 10px;
+    font-size: 14px;
+}
+
+.fuel-container {
+    position: absolute;
+    left: 19%;
+    top: 52%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+}
+
+
+.sound-system {
+    position: absolute;
+    top: 5%;
+    left: 5%;
+    width: 100px;
+    animation: animateSteering 2s infinite;
+}
+
+.sound-system img {
+    width: 100%;
+}
+
+.progress-bar {
+    margin-top: 15px; 
+    width: 100px;
+    height: 5px; /* Adjust height as needed */
+    background-color: rgb(22, 22, 22); /* Background color for the entire bar */
+  }
+  
+  .progress {
+    height: 100%; /* Fills the entire height of the progress bar container */
+    width: 100%; /* Adjust width to represent progress (0% to 100%) */
+    background-color: green; /* Color for the progress fill */
+    transition: width 2s ease-in-out;
+  }
+
+.fuel-container #fuelCapacity {
+    font-size: 2rem;
+}
+
+.fuel-container .litre {
+    font-size: 12px;
+}
+
+.speed {
+    margin-top: 40px;
+    font-size: 3rem;
+    font-weight: bold;
+}
+
+.speed-meter,.litre {
+    font-size: 14px;
+}
+
+#time {
+    position: absolute;
+    left: 20%;
+    top: 45%;
+    font-size: 20px;
+    color: #fff;
+
+}
+
+#welcomeMessage {
+    text-align: center;
+    transition: margin-top 2s ease-in-out;
+}
+
+.welcome-message {
+    margin-top: -80px;
+}
+
+.image-container {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.power-switch {
+    position: absolute; 
+    top: calc(50% - 21px);
+    left: calc(50% - 22.5px);
+    transition: top 2s ease-in-out, left 2s ease-in-out;
+}
+
+.instructions {
+    position: absolute;
+}
+
+.power-on .power-icon {
+    color: green;
+    border-color: green;
+    font-size: 2.5rem !important;
+}
+
+.engine-ready .power-icon {
+    color: red;
+    border-color: red;
+}
+
+.engine-ready.power-switch {
+    top: 80%;
+    left: 10%;
+}
+
+.instructions {
+    margin-top: 100px;
+    text-align: center;
+    color: #fff;
+}
+
+.power-icon {
+    padding: 7.5px;
+    font-size: 1.5rem !important;
+    color: grey;
+    background-color: #000;
+    border-radius: 50%;
+    border: 3px solid grey;
+    transition: color 1s ease-in-out,border 1s ease-in-out,font-size 2s ease-in-out ;
+}
+
+.car-image {
+    max-width: 100%;
+    max-height: 100vh;
+    object-fit: contain;
+    background-image: url("https://i.pinimg.com/originals/35/e9/03/35e903deb57f6669e5b376c3699189f6.jpg");
+    background-position: 50% 90%;
+    background-repeat: no-repeat;
+    transition: background-position 1s ease-in-out;
+}
+
+.weather {
+    position: absolute;
+    right: 19%;
+    margin-bottom: 90px;
+    color: #fff;
+    opacity: 0.75;
+}
+
+.weather span {
+    font-size: 1.2rem;
+}
+
+.audio {
+    position: absolute;
+    bottom: 21%;
+    width: 150px;
+}
+
+.audio img {
+    width: 100%;
+}
+
+.audio-instructions {
+    position: absolute;
+    bottom: 31%;
+    color: yellow;
+    font-size: 10px;
+}
