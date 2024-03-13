@@ -33,6 +33,7 @@ const hornElem = document.getElementById("carHorn");
 const fuelDropElem = document.querySelector(".fuel-drop");
 const progressElem = document.querySelector(".progress");
 const carImageElem = document.querySelector(".car-image");
+const maxSpeedElem = document.querySelector(".max-speed-warning");
 let isSongPlaying = false;
 let isDemoSpeedoMeter = false;
 
@@ -217,6 +218,7 @@ setInterval(() => {
 
  setInterval(() => {
   blinkTime(timeElem);
+  blinkTime(maxSpeedElem);
 },500)
 
 function playEngineSound() {
@@ -245,6 +247,7 @@ function startAccelerating() {
 }
 
 function stopAccelerating() {
+  maxSpeedElem.classList.add("d-none");
   isAccelerating = false;
   carAccelerating.pause();
 }
@@ -347,10 +350,13 @@ document.addEventListener('keydown', (event) => {
   }
     
     heldKeyInterval = setInterval(() => {
-        if (isKeyPressed && heldKey === "a" && isEngineOn) {
+        if (isKeyPressed && heldKey === "a" && isEngineOn && !isDemoSpeedoMeter) {
             startAccelerating();
             if(currentNumber > 80) {
                 document.querySelector("#warningMessage").classList.remove("d-none");
+            } 
+            if(currentNumber === 280) {
+              maxSpeedElem.classList.remove("d-none");
             }
             document.querySelector(".accelerator").classList.add("accelerating");
             const speedElem = document.getElementById("speed");
