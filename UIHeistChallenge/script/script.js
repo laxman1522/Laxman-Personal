@@ -353,7 +353,7 @@ document.addEventListener('keydown', (event) => {
   }
     
     heldKeyInterval = setInterval(() => {
-        if (isKeyPressed && heldKey.includes("a") && isEngineOn && !isDemoSpeedoMeter) {
+        if (isKeyPressed && heldKey.includes("a") && isEngineOn && !isDemoSpeedoMeter && !isEngineOffInProgress) {
           if(currentNumber > 80) {
             document.querySelector("#warningMessage").classList.remove("d-none");
           } 
@@ -385,7 +385,7 @@ document.addEventListener('keyup', (event) => {
   try {
     let key = event?.key;
     
-    if(key === "a" && !isDemoSpeedoMeter) {
+    if(key === "a" && !isDemoSpeedoMeter && isEngineOn && !isEngineOffInProgress) {
       clearInterval(heldKeyInterval);
       isKeyPressed = false;
       heldKey = [];
@@ -524,6 +524,11 @@ const doubleKeyPressHandler = (key) => {
          engineOff();
          clearIntervals();
          stopEngine();
+         carAccelerating.pause();
+         heldKey = [];
+         currentNumber = 0;
+         accelerating = false;
+         isAccelerating = false;
        }
        firstKeyPress = key;
        timeoutId = setTimeout(() => {
