@@ -282,9 +282,9 @@ document.addEventListener('keydown', (event) => {
             const speedElem = document.getElementById("speed");
             !accelerating && showAndDropNumbers(speedElem,50);
             accelerating = true;
-        } else {
+        } else if(isEngineOn) {
             clearInterval(heldKeyInterval);
-            key !== "e" && carAmbience.play();
+            carAmbience.play();
         }
     },2000)
 });
@@ -398,7 +398,7 @@ const doubleKeyPressHandler = (key) => {
       }
     } else {
       // New key pressed, set timer for potential double press
-      if(key === "e" && !isEngineOnInProgress && isEngineOn) {
+      if(key === "e" && !isEngineOnInProgress && isEngineOn && !isEngineOffInProgress) {
         isEngineOffInProgress = true;
         stopEngineSound();
         pauseSong();
