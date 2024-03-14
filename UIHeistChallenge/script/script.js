@@ -525,6 +525,7 @@ function stopEngine() {
         classListHandler(engineReadyClassElem,"remove","engine-ready");
         timeElem.classList.add("d-none");
         document.querySelector("#warningMessage").classList.add("d-none");
+        stopCamera();
         setTimeout(() => {
             showNextCharacter(0,engineInstructionsElem,"Power on the engine...");
             isEngineOffInProgress = false;
