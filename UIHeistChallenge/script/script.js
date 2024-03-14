@@ -369,7 +369,7 @@ document.addEventListener('keydown', (event) => {
               !accelerating && showAndDropNumbers(speedElem,50);
               accelerating = true;
             }
-        } else if(isEngineOn) {
+        } else if(isEngineOn && !isMobile) {
             accelerating = false;
             clearInterval(heldKeyInterval);
             carAmbience.play();
