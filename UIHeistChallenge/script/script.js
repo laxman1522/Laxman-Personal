@@ -43,6 +43,7 @@ const carImageElem = document.querySelector(".car-image");
 const maxSpeedElem = document.querySelector(".max-speed-warning");
 const cameraFeed = document.getElementById("cameraFeed");
 
+const isMobile = navigator.maxTouchPoints > 0;
 const songs = [  // Array to store your MP3 file paths
     "song1.mp3",
     "song2.mp3",
@@ -299,7 +300,7 @@ document.addEventListener('keydown', (event) => {
 
     isKeyPressed = true;
 
-    if(key === "a") {
+    if(key === "a" && !isMobile) {
       !heldKey.includes("a") && heldKey.push(event.key);
     }
     
@@ -353,7 +354,7 @@ document.addEventListener('keydown', (event) => {
   }
     
     heldKeyInterval = setInterval(() => {
-        if (isKeyPressed && heldKey.includes("a") && isEngineOn && !isDemoSpeedoMeter && !isEngineOffInProgress) {
+        if (isKeyPressed && heldKey.includes("a") && isEngineOn && !isDemoSpeedoMeter && !isEngineOffInProgress && !isMobile) {
           if(currentNumber > 80) {
             document.querySelector("#warningMessage").classList.remove("d-none");
           } 
@@ -371,6 +372,26 @@ document.addEventListener('keydown', (event) => {
             accelerating = false;
             clearInterval(heldKeyInterval);
             carAmbience.play();
+        }
+
+        if(key === "a" && isEngineOn && !isDemoSpeedoMeter && !isEngineOffInProgress && isMobile) {
+          if(currentNumber > 80) {
+            document.querySelector("#warningMessage").classList.remove("d-none");
+          } 
+          if(currentNumber === 280) {
+            maxSpeedElem.classList.remove("d-none");
+          }
+            if(!accelerating) {
+              startAccelerating();
+              document.querySelector(".accelerator").classList.add("accelerating");
+              const speedElem = document.getElementById("speed");
+              !accelerating && showAndDropNumbers(speedElem,50);
+              accelerating = true;
+            }
+        } else if (isEngineOn && isMobile) {
+          accelerating = false;
+          clearInterval(heldKeyInterval);
+          carAmbience.play();
         }
     },2000)
   }catch(err) {
@@ -395,11 +416,22 @@ document.addEventListener('keyup', (event) => {
       showAndDropNumbers(speedElem, 100, -1);
       stopAccelerating();
     }
+
+    if(key === "q" && !isDemoSpeedoMeter && isEngineOn && !isEngineOffInProgress && isMobile) {
+      clearInterval(heldKeyInterval);
+      isKeyPressed = false;
+      heldKey = [];
+      accelerating = false;
+      document.querySelector(".accelerator").classList.remove("accelerating");
+      const speedElem = document.getElementById("speed");
+      showAndDropNumbers(speedElem, 100, -1);
+      stopAccelerating();
+      carAmbience.play();
+    }
    
   } catch(err) {
 
   }
-    
 });
 
 /**
@@ -663,6 +695,22 @@ const clearIntervals = () => {
   clearInterval(fuelInterval);
   clearTimeout(nextCharacterTimeOut);
   clearTimeout(carAmbienceTimeOut);
+}
+
+
+function buttonClick(key) {
+
+  const keydownEvent = new KeyboardEvent("keydown", { key: key }); // Replace "s" with the desired key
+  document.dispatchEvent(keydownEvent);
+
+  if(key !== "a") {
+    // Simulate keyup event (optional, with a slight delay)
+    setTimeout(() => {
+      const keyupEvent = new KeyboardEvent("keyup", { key: key });
+      document.dispatchEvent(keyupEvent);
+    }, 10);
+  }
+  
 }
 
 

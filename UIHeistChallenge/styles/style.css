@@ -369,3 +369,25 @@
     font-style: italic;
     margin-top: 50px;
 }
+
+
+.button-actions {
+    position: absolute;
+    bottom: 20%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 30px;
+    width: 100%;
+}
+
+.keys {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: green;
+    color: #fff;
+}
