@@ -44,6 +44,7 @@ const maxSpeedElem = document.querySelector(".max-speed-warning");
 const cameraFeed = document.getElementById("cameraFeed");
 
 const isMobile = navigator.maxTouchPoints > 0;
+isMobile && document.querySelector(".button-actions").classList.remove("d-none");
 const songs = [  // Array to store your MP3 file paths
     "song1.mp3",
     "song2.mp3",
