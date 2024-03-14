@@ -296,6 +296,7 @@ function lerp(start, end, amount) {
  */
 document.addEventListener('keydown', (event) => {
   try {
+    isMobile && clearInterval(heldKeyInterval);
     const key = event.key;
     doubleKeyPressHandler(key);
 
@@ -353,48 +354,51 @@ document.addEventListener('keydown', (event) => {
     progressElem.style.backgroundColor = "green";
     fuelLevel = "normal";
   }
-    
-    heldKeyInterval = setInterval(() => {
-        if (isKeyPressed && heldKey.includes("a") && isEngineOn && !isDemoSpeedoMeter && !isEngineOffInProgress && !isMobile) {
-          if(currentNumber > 80) {
-            document.querySelector("#warningMessage").classList.remove("d-none");
-          } 
-          if(currentNumber === 280) {
-            maxSpeedElem.classList.remove("d-none");
-          }
-            if(!accelerating) {
-              startAccelerating();
-              document.querySelector(".accelerator").classList.add("accelerating");
-              const speedElem = document.getElementById("speed");
-              !accelerating && showAndDropNumbers(speedElem,50);
-              accelerating = true;
-            }
-        } else if(isEngineOn && !isMobile) {
-            accelerating = false;
-            clearInterval(heldKeyInterval);
-            carAmbience.play();
-        }
 
-        if(isKeyPressed && key === "a" && isEngineOn && !isDemoSpeedoMeter && !isEngineOffInProgress && isMobile) {
-          if(currentNumber > 80) {
-            document.querySelector("#warningMessage").classList.remove("d-none");
-          } 
-          if(currentNumber === 280) {
-            maxSpeedElem.classList.remove("d-none");
-          }
-            if(!accelerating) {
-              startAccelerating();
-              document.querySelector(".accelerator").classList.add("accelerating");
-              const speedElem = document.getElementById("speed");
-              !accelerating && showAndDropNumbers(speedElem,50);
-              accelerating = true;
+  
+
+      heldKeyInterval = setInterval(() => {
+          if (isKeyPressed && heldKey.includes("a") && isEngineOn && !isDemoSpeedoMeter && !isEngineOffInProgress && !isMobile) {
+            if(currentNumber > 80) {
+              document.querySelector("#warningMessage").classList.remove("d-none");
+            } 
+            if(currentNumber === 280) {
+              maxSpeedElem.classList.remove("d-none");
             }
-        } else if (isEngineOn && isMobile) {
-          accelerating = false;
-          clearInterval(heldKeyInterval);
-          carAmbience.play();
-        }
-    },2000)
+              if(!accelerating) {
+                startAccelerating();
+                document.querySelector(".accelerator").classList.add("accelerating");
+                const speedElem = document.getElementById("speed");
+                !accelerating && showAndDropNumbers(speedElem,50);
+                accelerating = true;
+              }
+          } else if(isEngineOn && !isMobile) {
+              accelerating = false;
+              clearInterval(heldKeyInterval);
+              carAmbience.play();
+          }
+
+          if(key === "a" && isEngineOn && !isDemoSpeedoMeter && !isEngineOffInProgress && isMobile) {
+            if(currentNumber > 80) {
+              document.querySelector("#warningMessage").classList.remove("d-none");
+            } 
+            if(currentNumber === 280) {
+              maxSpeedElem.classList.remove("d-none");
+            }
+              if(!accelerating) {
+                startAccelerating();
+                document.querySelector(".accelerator").classList.add("accelerating");
+                const speedElem = document.getElementById("speed");
+                !accelerating && showAndDropNumbers(speedElem,50);
+                accelerating = true;
+              }
+          } else if (isEngineOn && isMobile) {
+            clearInterval(heldKeyInterval);
+            accelerating = false;
+            carAmbience.play();
+          }
+        },2000)
+    
   }catch(err) {
 
   }
@@ -407,7 +411,7 @@ document.addEventListener('keyup', (event) => {
   try {
     let key = event?.key;
     
-    if(key === "a" && !isDemoSpeedoMeter && isEngineOn && !isEngineOffInProgress) {
+    if(key === "a" && !isDemoSpeedoMeter && isEngineOn && !isEngineOffInProgress && !isMobile) {
       clearInterval(heldKeyInterval);
       isKeyPressed = false;
       heldKey = [];
@@ -419,14 +423,13 @@ document.addEventListener('keyup', (event) => {
     }
 
     if(key === "q" && !isDemoSpeedoMeter && isEngineOn && !isEngineOffInProgress && isMobile) {
-      clearInterval(heldKeyInterval);
       isKeyPressed = false;
-      heldKey = [];
       accelerating = false;
       document.querySelector(".accelerator").classList.remove("accelerating");
       const speedElem = document.getElementById("speed");
       showAndDropNumbers(speedElem, 100, -1);
       stopAccelerating();
+      clearInterval(heldKeyInterval);
       carAmbience.play();
     }
    
@@ -704,13 +707,11 @@ function buttonClick(key) {
   const keydownEvent = new KeyboardEvent("keydown", { key: key }); // Replace "s" with the desired key
   document.dispatchEvent(keydownEvent);
 
-  if(key !== "a") {
     // Simulate keyup event (optional, with a slight delay)
     setTimeout(() => {
       const keyupEvent = new KeyboardEvent("keyup", { key: key });
       document.dispatchEvent(keyupEvent);
     }, 10);
-  }
   
 }
 
