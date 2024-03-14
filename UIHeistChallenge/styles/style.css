@@ -373,7 +373,7 @@
 
 .button-actions {
     position: absolute;
-    bottom: 10%;
+    bottom: 0%;
     display: flex;
     justify-content: center;
     align-items: center;
