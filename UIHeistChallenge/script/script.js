@@ -375,7 +375,7 @@ document.addEventListener('keydown', (event) => {
             carAmbience.play();
         }
 
-        if(key === "a" && isEngineOn && !isDemoSpeedoMeter && !isEngineOffInProgress && isMobile) {
+        if(isKeyPressed && key === "a" && isEngineOn && !isDemoSpeedoMeter && !isEngineOffInProgress && isMobile) {
           if(currentNumber > 80) {
             document.querySelector("#warningMessage").classList.remove("d-none");
           } 
