@@ -33,3 +33,8 @@
 # Vehicle will come back to its idle position once the engine is turned off
 
 
+For Mobile
+
+A -> Single click -> Accelerator
+Q -> Single click -> Stop accelerating
+
