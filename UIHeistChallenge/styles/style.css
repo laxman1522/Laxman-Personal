@@ -38,9 +38,9 @@
     position: absolute;
     top: 6%;
     left: 33%;
-    width: 330px;
+    width: 33%;
     object-fit: cover;
-    height: 150px;
+    height: 16.66%;
     border-radius: 20%;
     clip-path: polygon(0% -10%, 100% -10%, 85.3% 145.3%, 8.8% 99%)
 }
