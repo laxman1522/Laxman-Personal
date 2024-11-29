@@ -1,0 +1,35 @@
+
+.traffic-container {
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100vh;
+    position: relative;
+
+    .traffic-image {
+        
+        width: 100vw;
+        height: 100vh;
+    
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+    }
+}
+
+.gasStation {
+    position: absolute;
+    top:5%;
+    left: 16%;
+    width: 400px;
+    height: 400px;
+
+    canvas {
+        position: absolute;
+    }
+}
+
