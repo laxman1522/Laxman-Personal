@@ -7,6 +7,7 @@ import Car from "../car/Car";
 import "./CarModalTwo.scss";
 import { Canvas } from "@react-three/fiber";
 import gif from "../../assets/boom.gif";
+import People from "../people/people";
 
 
 const haltPositions = [6.5, -6.5, 5, -5];
@@ -15,6 +16,10 @@ const haltPositions = [6.5, -6.5, 5, -5];
 const CarTwoModal = () => {
 
     const [position, setPosition] = useState([[1.5, 2, -16],[-1.5, 2, 16],[-10, 2, -2.5],[10, 2, 2.5]]);
+
+    const [peoplePosition, setPeoplePosition] = useState([0,0,-0.25]);
+
+    const [peopleRotation, setPeopleRotation] =  useState([1.75,3,0])
 
     const [rotation, setRotation] = useState([[0,0,0],[0, -3.15, 0],[0, -4.725, 0],[0, 4.75, 0]]);
 
@@ -69,6 +74,9 @@ const CarTwoModal = () => {
 
       useEffect(() => {
         const carInterval = setInterval(() => {
+            if(showPedestrianCrossing) {
+                setPeoplePosition((prevPeoplePosition) => [prevPeoplePosition[0],prevPeoplePosition[1],prevPeoplePosition[2]]);
+            }
             if(position[0][0] > 1.5 && position[0][0]-2 < position[3][0] && !carConfigs[3]?.accidented) {
                 setShowBoom(true);
                 setTimeout(() => {
@@ -106,7 +114,7 @@ const CarTwoModal = () => {
             setPosition((prevPosition) =>
                 prevPosition.map((carPosition, index) => {
                     const carData = carConfigs[index];
-                    if (carData.axis === "z" && carData.direction === 1 && !carData?.accidented) {
+                    if (carData.axis === "z" && carData.direction === 1 && !carData?.accidented ) {
                         // Car moving along +z direction
                         if (carLoaded[index]) {
                             if((rotation[index][1] < -0.7 && signal !== 1) || (position[index][2] > 0)) {
@@ -188,7 +196,7 @@ const CarTwoModal = () => {
         }, 5);
     
         return () => clearInterval(carInterval);
-    }, [carConfigs, carLoaded, signal, rotation, position]);
+    }, [carConfigs, carLoaded, signal, rotation, position, showPedestrianCrossing]);
     
 
 
@@ -214,7 +222,7 @@ const CarTwoModal = () => {
     return(
         <>
             <div className="car-container">
-            <Canvas camera={{ position: [1, 15, 0] }}>
+            <Canvas dpr={[1,2]} shadows camera={{ position: [1, 15, 0] }}>
                 <ambientLight intensity={1} />
                 <directionalLight position={[5, 5, 5]} />
                 {carConfigs?.map((carData, index) => {
